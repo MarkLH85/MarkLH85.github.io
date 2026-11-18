@@ -1,60 +1,136 @@
 import { useState } from "react";
-import { archiveCategories, archiveProjects, learningCollections, type ArchiveCategory } from "./archiveData";
+import {
+  archiveFilters,
+  archiveGroups,
+  archiveProjects,
+  type ArchiveFilterId,
+} from "./archiveData";
 
 export default function ProjectArchive() {
-  const [category, setCategory] = useState<ArchiveCategory>("All");
-  const visibleProjects = archiveProjects.filter((project) => category === "All" || project.category === category);
+  const [selectedFilter, setSelectedFilter] = useState<ArchiveFilterId>("all");
+  const visibleGroups = archiveGroups
+    .filter((group) => selectedFilter === "all" || group.id === selectedFilter)
+    .map((group) => ({
+      ...group,
+      projects: archiveProjects.filter((project) => project.group === group.id),
+    }));
+  const visibleCount = visibleGroups.reduce(
+    (count, group) => count + group.projects.length,
+    0,
+  );
+  const selectedLabel =
+    selectedFilter === "all"
+      ? "the archive"
+      : archiveGroups.find((group) => group.id === selectedFilter)?.label ?? "this group";
 
   return (
-    <section id="archive" className="archive-section section-container" aria-labelledby="archive-heading">
+    <section
+      id="archive"
+      className="archive-section section-container"
+      aria-labelledby="archive-heading"
+    >
       <div className="section-intro">
-        <p className="eyebrow">THE REST OF THE JOURNEY</p>
+        <p className="eyebrow">SELECTED PROJECTS &amp; LEARNING SAMPLES</p>
         <h2 id="archive-heading">More projects.<br /><span>More practice.</span></h2>
-        <p>Beyond the featured work: local applications, guided clones, business concepts, and browser experiments from my WebDev workspace.</p>
+        <p>
+          A focused selection of virtual-internship work, course projects, a
+          guided clone, and learning labs.
+        </p>
       </div>
-      <p className="archive-notice">These projects have local source code, but no verified public demo or personal repository link is configured here. Screenshots are previews, not live applications. Guided adaptations and smaller exercises are labeled separately.</p>
-      <div className="archive-filters" role="group" aria-label="Filter archived projects">
-        {archiveCategories.map((item) => (
-          <button type="button" key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>
-            {item} <span>{item === "All" ? archiveProjects.length : archiveProjects.filter((project) => project.category === item).length}</span>
+
+      <p className="archive-notice">
+        Summarist is the only entry with a verified public demo; its source
+        repository is private. The other eight entries are local-source
+        examples with no public demo or MarkLH85 repository verified. Local
+        workspace folders are not publicly accessible.
+      </p>
+
+      <div className="archive-filters" role="group" aria-label="Filter archive by project type">
+        {archiveFilters.map(({ id, label }) => (
+          <button
+            type="button"
+            key={id}
+            aria-pressed={selectedFilter === id}
+            onClick={() => setSelectedFilter(id)}
+          >
+            {label}
+            <span>
+              {id === "all"
+                ? archiveProjects.length
+                : archiveProjects.filter((project) => project.group === id).length}
+            </span>
           </button>
         ))}
       </div>
-      <p className="archive-count" role="status">{visibleProjects.length} {visibleProjects.length === 1 ? "project" : "projects"} in {category === "All" ? "the archive" : category}</p>
-      <div className="archive-grid">
-        {visibleProjects.map((project) => (
-          <article className="archive-card" key={project.sourcePath}>
-            {project.image && <img className="archive-image" src={project.image} alt={`${project.title} local website preview`} width="1280" height="800" loading="lazy" />}
-            <div className="archive-card-body">
-              <p className="eyebrow">{project.category}</p>
-              <h3>{project.title}</h3>
-              <p className="archive-description">{project.description}</p>
-              <ul className="project-stack" aria-label={`${project.title} technologies`}>{project.stack.map((skill) => <li key={skill}>{skill}</li>)}</ul>
-              <span className="local-status">Local source · not publicly linked</span>
-              <details className="source-location">
-                <summary>Project details &amp; source location</summary>
-                {project.note && <p>{project.note}</p>}
-                <p>Folder relative to WebDev:</p>
-                <code>{project.sourcePath}</code>
-              </details>
+
+      <p className="archive-count" role="status">
+        {visibleCount} {visibleCount === 1 ? "project" : "projects"} in {selectedLabel}
+      </p>
+
+      <div className="archive-groups">
+        {visibleGroups.map((group) => (
+          <section
+            className="archive-group"
+            key={group.id}
+            aria-labelledby={`archive-group-${group.id}`}
+          >
+            <h3 id={`archive-group-${group.id}`} className="archive-group-heading">
+              {group.label}
+            </h3>
+            <div className="archive-grid">
+              {group.projects.map((project) => (
+                <article className="archive-card" key={project.title}>
+                  <div className="archive-card-body">
+                    <p className="eyebrow">{group.label}</p>
+                    <h4>{project.title}</h4>
+                    <p className="archive-description">{project.description}</p>
+                    <ul
+                      className="project-stack"
+                      aria-label={`${project.title} technologies`}
+                    >
+                      {project.stack.map((skill) => (
+                        <li key={skill}>{skill}</li>
+                      ))}
+                    </ul>
+                    <div className="archive-access">
+                      {project.demoUrl && (
+                        <a
+                          className="archive-demo-link"
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Live demo of ${project.title} (opens in a new tab)`}
+                        >
+                          Live Demo <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                      <span className="archive-access-status">
+                        {project.sourceStatus}
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
-          </article>
+          </section>
         ))}
       </div>
-      <details className="learning-collection">
-        <summary>Earlier mini-projects &amp; learning collections</summary>
-        <p>Small assignments are grouped here instead of competing with the larger projects. Repeated lesson snapshots and backups are not counted as new applications.</p>
-        <div className="learning-grid">
-          {learningCollections.map((collection) => (
-            <article key={collection.title}>
-              <h3>{collection.title}</h3>
-              <ul>{collection.projects.map((title) => <li key={title}>{title}</li>)}</ul>
-              <code>{collection.sourcePath}</code>
-            </article>
-          ))}
-        </div>
-        <p>Git drills, empty scaffolds, dependency folders, algorithm challenges, the Moodify command-line app, and backend/database lesson snippets are not presented as standalone web projects. My Shop is included above and explicitly labeled as an API-only project.</p>
-      </details>
+
+      <div className="archive-github">
+        <a
+          className="all-projects-link"
+          href="https://github.com/MarkLH85?tab=repositories"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Browse MarkLH85&apos;s public GitHub repositories
+          <span aria-hidden="true">↗</span>
+        </a>
+        <p>
+          This list includes public repositories only; it is not a complete
+          list of archive projects.
+        </p>
+      </div>
     </section>
   );
 }

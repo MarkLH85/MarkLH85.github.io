@@ -21,7 +21,7 @@ GitHub Pages hosts the production build, so the site works on mobile or another 
 
 Push changes to `main` to publish an update. `.github/workflows/deploy.yml` installs the locked dependencies with Node 24, runs lint and the production build, and deploys `dist` to GitHub Pages. Check the repository's Actions tab for deployment status; publishing may take a few minutes. Pages must use **GitHub Actions** as its build source in repository settings.
 
-This is a root-domain user site, so Vite's default `/` base is intentional. Only the portfolio application and its preview assets are published, not the original coursework folders. Archive source locations are informational workspace-relative paths, not downloadable links.
+This is a root-domain user site, so Vite's default `/` base is intentional. Only the portfolio application and its preview assets are published; the original coursework folders are not included.
 
 ## Contact form
 
@@ -37,13 +37,11 @@ Add future projects to the array, ordered from strongest to weakest. Update pers
 
 ## Project archive
 
-The six featured projects are followed by 29 additional entries in a filterable archive, covering React/Next.js apps, full-stack/AI work, websites, and browser tools. `src/archiveData.ts` records descriptions, technology tags, relative source locations, implementation caveats, and preview paths. The archive is rendered by `src/ProjectArchive.tsx`.
+The six featured projects are followed by nine selected archive entries, grouped as virtual-internship work, course projects, a guided clone, and focused learning labs. `src/archiveData.ts` records each entry's provenance label, description, technology tags, and source access status. The archive is rendered by `src/ProjectArchive.tsx`.
 
-These entries were identified from implementations and project notes in the WebDev workspace, not just the public GitHub profile. A local source location is not a public repository or deployment link. No new deployment URLs are invented; archived apps are explicitly labeled as local source without verified public links. Source code, credentials, `.env` files, and backends are not copied into the portfolio's public directory.
+Summarist is the only archive entry with a verified public demo: https://summarist-sepia.vercel.app. Its source repository is private. The other eight entries are local-source examples; no public demo or MarkLH85 repository has been verified for them. Local workspace folders are not publicly accessible and are not linked from the archive.
 
-Six local static-site screenshots are stored as `public/archive-*.png`. They are visual previews, not embedded applications. Guided clones, practice business concepts, backend-only My Shop, API-dependent apps, and the small InstaClone routing exercise are identified honestly.
-
-Earlier HTML/CSS mini-projects and React/JavaScript/Next.js lesson exercises appear in collapsible learning collections. Repeated lesson stages, backups, empty scaffolds, Git drills, algorithm problems, CLI projects, and standalone backend/database snippets are not counted as new web applications. The existing six featured entries are not duplicated in the archive.
+The archive's GitHub link opens MarkLH85's public repository listing only; it is not a complete list of the archive projects. The YouTube practice clone is identified as tutorial-based, and no tutorial author's repository is presented as Mark's.
 
 ## Animation gallery
 

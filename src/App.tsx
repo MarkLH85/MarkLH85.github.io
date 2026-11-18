@@ -1,6 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import AnimationGallery from "./AnimationGallery";
 import ProjectArchive from "./ProjectArchive";
+import SkinstricCaseStudy from "./SkinstricCaseStudy";
 
 type IconName = "github" | "linkedin" | "arrow" | "mail" | "sun" | "moon" | "code" | "shield";
 
@@ -32,6 +33,7 @@ interface Project {
   image?: string;
   liveUrl?: string;
   sourceUrl: string;
+  caseStudyUrl?: string;
   tone: string;
 }
 
@@ -45,6 +47,7 @@ const projects: Project[] = [
     image: "/project-skinstric.png",
     liveUrl: "https://skinstric-ai-orcin.vercel.app",
     sourceUrl: "https://github.com/MarkLH85/skinstric-ai",
+    caseStudyUrl: "#skinstric-case-study",
     tone: "slate",
   },
   {
@@ -205,6 +208,11 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <a href={project.sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`Source code for ${project.title}`}>
             <Icon name="github" /> Source code
           </a>
+          {project.caseStudyUrl && (
+            <a href={project.caseStudyUrl} aria-label={`Read the ${project.title} case study`}>
+              Case study <Icon name="arrow" />
+            </a>
+          )}
         </div>
       </div>
     </article>
@@ -301,6 +309,7 @@ function App() {
           <a className="all-projects-link" href="https://github.com/MarkLH85?tab=repositories" target="_blank" rel="noopener noreferrer">More code, experiments, and learning on GitHub <Icon name="arrow" /></a>
         </section>
 
+        <SkinstricCaseStudy />
         <AnimationGallery />
         <ProjectArchive />
 
